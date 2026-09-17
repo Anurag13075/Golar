@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { invokeNovaText } from "@/lib/bedrock";
+import { invokeGroqText } from "@/lib/groq";
 
 const AGENT_PROMPTS: Record<string, string> = {
   advocate: "You are the 'Claim Advocate' AI for farmers in India. Your goal is to help them understand PMFBY insurance rules, draft appeals for rejected claims, and give them confidence to fight unfair rejections. Be deeply empathetic, use formal but simple language, and always side with the farmer. Keep responses concise.",
@@ -18,32 +18,20 @@ export async function POST(req: Request) {
 
     const systemPrompt = AGENT_PROMPTS[agentId] || AGENT_PROMPTS.advocate;
     
-    // Construct the conversation history for Nova
-    // Note: To keep it simple for the hackathon, we'll format the history into the current prompt
-    // In a production app, we would pass the actual message history array to the Converse API.
     const historyText = history
-      .slice(-4) // Only take last 4 messages to save context
+      .slice(-4) 
       .map((m: any) => `${m.role.toUpperCase()}: ${m.content}`)
       .join("\n");
       
     const finalPrompt = `Previous Conversation:\n${historyText}\n\nUSER'S NEW MESSAGE:\n${message}\n\nPlease respond as the AI agent based on your system instructions. Do NOT use JSON formatting, just respond with conversational text.`;
 
-    // Check if AWS credentials are set, otherwise fallback to mock
-    if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
-      // Mock response for hackathon safety
-      await new Promise(r => setTimeout(r, 1500));
-      return NextResponse.json({ 
-        reply: `(MOCK MODE) I am the ${agentId} agent. I hear you saying: "${message}". Please configure your AWS keys in .env.local to connect me to Amazon Nova!` 
-      });
-    }
-    
-    const resultText = await invokeNovaText(finalPrompt, systemPrompt);
+    const resultText = await invokeGroqText(finalPrompt, systemPrompt);
 
     return NextResponse.json({ reply: resultText });
   } catch (error) {
     console.error("Agent Chat Error:", error);
     return NextResponse.json({ 
-      reply: "I'm having trouble connecting to my knowledge base right now. Please try again." 
-    });
+      error: "Failed to communicate with Groq AI" 
+    }, { status: 500 });
   }
 }

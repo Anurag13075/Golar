@@ -1,53 +1,43 @@
 import { NextResponse } from "next/server";
-import { invokeNovaText } from "@/lib/bedrock";
-import { NOVA_PROMPTS } from "@/lib/prompts";
-import { getMockTranscription } from "@/lib/mock";
+import { transcribeGroqAudio, invokeGroqText } from "@/lib/groq";
+import { DAMAGE_EXTRACTION_PROMPT } from "@/lib/prompts";
 
 export async function POST(req: Request) {
   try {
-    // We can receive either JSON with { manualText: string } 
-    // OR FormData with an audio file
-    const contentType = req.headers.get("content-type") || "";
+    const formData = await req.formData();
+    const audioFile = formData.get("audio") as Blob;
+
+    if (!audioFile) {
+      return NextResponse.json({ error: "No audio file provided" }, { status: 400 });
+    }
+
+    // 1. Transcribe audio using Groq Whisper
+    // We need to convert Blob to File for Groq SDK
+    const file = new File([audioFile], "audio.webm", { type: audioFile.type });
+    const transcript = await transcribeGroqAudio(file);
+
+    // 2. Extract structured data using Groq Text
+    const extractionPrompt = `Here is the transcribed text of the farmer's report. Please extract the details according to the system prompt guidelines.\n\nTranscription:\n"${transcript}"`;
     
-    let transcriptionText = "";
-
-    if (contentType.includes("application/json")) {
-      const { manualText } = await req.json();
-      transcriptionText = manualText;
-    } else if (contentType.includes("multipart/form-data")) {
-      // In a full production AWS architecture, we would upload this audio Blob to S3, 
-      // trigger an Amazon Transcribe job, and await the result.
-      // For this hackathon scope, we'll simulate the AWS Transcribe output for audio.
-      transcriptionText = "कल रात भारी ओलावृष्टि से मेरी गेहूं की फसल पूरी तरह नष्ट हो गई है। लगभग 70 प्रतिशत नुकसान हुआ है।"; 
-    }
-
-    if (!transcriptionText) {
-      return NextResponse.json({ error: "No input provided" }, { status: 400 });
-    }
-
-    // Check if AWS credentials are set, otherwise fallback to mock
-    if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
-      console.warn("AWS credentials missing, falling back to mock extraction data");
-      return NextResponse.json(getMockTranscription(transcriptionText));
-    }
-
-    const prompt = `Extract the crop damage details from this farmer's report. Report: "${transcriptionText}"`;
+    let rawResponse = await invokeGroqText(extractionPrompt, DAMAGE_EXTRACTION_PROMPT);
     
-    let resultText = await invokeNovaText(prompt, NOVA_PROMPTS.EXTRACTION_SYSTEM);
-
-    // Clean up potential markdown wrappers
-    resultText = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
-
-    const analysis = JSON.parse(resultText);
-    
-    // Ensure we maintain the text property required by the frontend
-    if (!analysis.text) {
-      analysis.text = transcriptionText;
+    // Clean JSON response (strip markdown backticks if present)
+    const jsonMatch = rawResponse.match(/```json\n([\s\S]*)\n```/);
+    if (jsonMatch) {
+      rawResponse = jsonMatch[1];
+    } else {
+      rawResponse = rawResponse.replace(/```/g, "").trim();
     }
 
-    return NextResponse.json(analysis);
-  } catch (error) {
+    const extractedData = JSON.parse(rawResponse);
+
+    return NextResponse.json({
+      transcript: transcript,
+      extractedData: extractedData
+    });
+
+  } catch (error: any) {
     console.error("Transcription/Extraction Error:", error);
-    return NextResponse.json(getMockTranscription("Error processing request."));
+    return NextResponse.json({ error: "Failed to process audio report" }, { status: 500 });
   }
 }

@@ -1,41 +1,22 @@
 import { NextResponse } from "next/server";
-import { invokeNovaText } from "@/lib/bedrock";
-import { NOVA_PROMPTS } from "@/lib/prompts";
-import { getMockAppeal } from "@/lib/mock";
-import type { Claim } from "@/lib/types";
+import { invokeGroqText } from "@/lib/groq";
 
 export async function POST(req: Request) {
   try {
-    const { claim } = await req.json() as { claim: Claim };
+    const { claimId, reason } = await req.json();
 
-    if (!claim) {
-      return NextResponse.json({ error: "No claim provided" }, { status: 400 });
-    }
-
-    // Check if AWS credentials are set, otherwise fallback to mock
-    if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
-      console.warn("AWS credentials missing, falling back to mock appeal data");
-      return NextResponse.json(getMockAppeal());
-    }
-
-    const prompt = `Draft a grievance appeal for the following rejected PMFBY claim.
-Claim Ref: ${claim.reference_number}
-Farmer: ${claim.policy.farmer_name}
-Crop: ${claim.policy.crop}
-Damage Date: ${claim.damage_date}
-Rejection Reason: ${claim.rejection_reason}
-
-Write a persuasive, formal letter to the District Level Monitoring Committee (DLMC) requesting an overturn of this rejection. Cite specific rules from the operational guidelines.`;
+    const prompt = `Draft a formal grievance appeal letter for the PMFBY (Pradhan Mantri Fasal Bima Yojana) insurance company.
     
-    let resultText = await invokeNovaText(prompt, NOVA_PROMPTS.APPEAL_SYSTEM);
+Claim ID: ${claimId}
+Reason for Rejection/Grievance: ${reason}
 
-    // Clean up potential markdown wrappers
-    resultText = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
+Write a formal, persuasive, and legally sound letter (max 250 words) from the perspective of an Indian farmer to the insurance grievance officer. Request an immediate reassessment.`;
 
-    const appeal = JSON.parse(resultText);
-    return NextResponse.json(appeal);
+    const appealText = await invokeGroqText(prompt, "You are a professional legal advocate for farmers in India.");
+
+    return NextResponse.json({ appeal: appealText });
   } catch (error) {
-    console.error("Appeal Generation Error:", error);
-    return NextResponse.json(getMockAppeal());
+    console.error("Generate Appeal Error:", error);
+    return NextResponse.json({ error: "Failed to generate appeal" }, { status: 500 });
   }
 }

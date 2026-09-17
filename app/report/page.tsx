@@ -71,27 +71,28 @@ export default function ReportPage() {
   const handleSubmitClaim = async () => {
     setIsProcessing(true);
     try {
-      const res = await fetch("/api/submit-claim", {
+      const res = await fetch("/api/claims", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ claim }),
       });
       const json = await res.json();
-      if (json.success) {
-        setSubmissionResult({ referenceNumber: json.data.reference_number, claimId: json.data.claim_id });
-        setIsProcessing(false);
-        setCurrentStep(4);
-        return;
+      
+      if (!res.ok) {
+        throw new Error(json.error || "Failed to submit claim");
       }
-    } catch {
-      // fallback
+
+      setSubmissionResult({ 
+        referenceNumber: `PMFBY-${new Date().getFullYear()}-RJ-${Math.floor(1000 + Math.random() * 9000)}`, 
+        claimId: claim.id 
+      });
+      setCurrentStep(4);
+    } catch (error: any) {
+      console.error("Submission failed:", error);
+      alert(error.message || "Failed to submit claim to DynamoDB. Please try again.");
+    } finally {
+      setIsProcessing(false);
     }
-    setSubmissionResult({
-      referenceNumber: `FR-${Math.floor(Math.random() * 1000000).toString().padStart(6, "0")}`,
-      claimId: "cl_mock_123",
-    });
-    setIsProcessing(false);
-    setCurrentStep(4);
   };
 
   const nextStep = () => {

@@ -12,28 +12,17 @@ export default function ClaimsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In a real app, we would fetch from /api/claims
-    // For now, load from localStorage if exists, or show mock
-    const loadClaims = () => {
-      const stored = localStorage.getItem("fasal_rakshak_claims");
-      if (stored) {
-        setClaims(JSON.parse(stored));
-      } else {
-        // Create a mock rejected claim to show the appeal feature
-        const mockClaim: Claim = {
-          id: "claim_123456",
-          reference_number: "FR-2026-89A4",
-          policy: DEMO_SCHEMES.farmer_profiles[0],
-          damage_type: "hailstorm",
-          severity_percent: 65,
-          damage_date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
-          status: "rejected",
-          rejection_reason: "Claim filed after 72 hours of incident.",
-          created_at: new Date().toISOString()
-        };
-        setClaims([mockClaim]);
+    const loadClaims = async () => {
+      try {
+        const res = await fetch("/api/claims");
+        if (!res.ok) throw new Error("Failed to fetch");
+        const data = await res.json();
+        setClaims(data.claims || []);
+      } catch (error) {
+        console.error("Error loading claims:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     loadClaims();

@@ -4,19 +4,25 @@ import { motion } from "motion/react";
 import { CheckCircle2, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const TypewriterText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
+const TypewriterText = ({ text, delay = 0, loop = false }: { text: string; delay?: number; loop?: boolean }) => {
   const [displayText, setDisplayText] = useState("");
   
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     const startTyping = () => {
       let i = 0;
+      setDisplayText(""); // Reset for loop
       const interval = setInterval(() => {
         if (i < text.length) {
           setDisplayText((prev) => prev + text.charAt(i));
           i++;
         } else {
           clearInterval(interval);
+          if (loop) {
+            timeout = setTimeout(() => {
+              startTyping();
+            }, 3000); // Wait 3 seconds then type again
+          }
         }
       }, 30); // typing speed
       return interval;
@@ -28,7 +34,7 @@ const TypewriterText = ({ text, delay = 0 }: { text: string; delay?: number }) =
     }, delay);
 
     return () => clearTimeout(timeout);
-  }, [text, delay]);
+  }, [text, delay, loop]);
 
   return <span>{displayText}</span>;
 };
@@ -85,7 +91,8 @@ export default function HowItWorks() {
                   <p className="text-sm text-slate-600 leading-relaxed font-medium min-h-[80px]">
                     <TypewriterText 
                       text="I've recorded hailstorm damage for your wheat crop. I will now analyze the satellite weather data for the past 72 hours to corroborate your claim. Want me to draft the report?" 
-                      delay={1000} 
+                      delay={1000}
+                      loop={true}
                     />
                   </p>
                 </div>
@@ -153,8 +160,8 @@ export default function HowItWorks() {
                     </button>
                   </div>
                 </div>
-                <div className="text-sm text-green-800 bg-green-50 px-3 py-2 rounded-lg font-medium border border-green-100">
-                  <TypewriterText text="Generate self-declaration affidavit for name variation." delay={1200} />
+                <div className="text-sm text-green-800 bg-green-50 px-3 py-2 rounded-lg font-medium border border-green-100 min-h-[40px]">
+                  <TypewriterText text="Generate self-declaration affidavit for name variation." delay={1200} loop={true} />
                 </div>
               </motion.div>
             </motion.div>
