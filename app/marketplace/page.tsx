@@ -56,7 +56,7 @@ export default function MarketplacePage() {
             Nova Powered
           </div>
           <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">
-            The Farmer's <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">AI Marketplace</span>
+            The Farmer&apos;s <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">AI Marketplace</span>
           </h1>
           <p className="text-lg text-slate-500 max-w-2xl mx-auto font-medium">
             Deploy specialized AI agents powered by Amazon Nova to fight your claims, diagnose your crops, and maximize your profit.
@@ -72,7 +72,7 @@ export default function MarketplacePage() {
           }}
           className="grid md:grid-cols-2 gap-6"
         >
-          {AGENTS.map((agent, i) => (
+          {AGENTS.map((agent) => (
             <motion.div
               key={agent.id}
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}

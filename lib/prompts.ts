@@ -6,10 +6,15 @@ You MUST respond with ONLY a valid JSON object, no markdown formatting, no backt
 Output JSON Schema:
 {
   "crop_detected": "string (e.g., Wheat, Rice, Cotton, Unknown)",
-  "damage_type": "string (e.g., hailstorm, flood, drought, pest, disease, unseasonal_rain, other)",
+  "damage_type": "string (one of hailstorm, flood, drought, cyclone, pest, disease, unseasonal_rain, frost, landslide, other)",
   "severity_percent": number (0-100),
-  "matches_voice": boolean (always true for this simulation unless clearly a different crop),
-  "is_recent": boolean (always true for this simulation),
+  "severity": "string (one of low, moderate, severe, total_loss)",
+  "damage_type_hi": "string",
+  "is_recent": boolean,
+  "description": "string based only on visible evidence",
+  "description_hi": "string translation of the description",
+  "concerns": ["string"],
+  "matches_voice": boolean,
   "confidence_score": number (0-100)
 }`,
 

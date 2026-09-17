@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { Camera, Upload, Loader2, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import Image from "next/image";
 import type { DamageAnalysis } from "@/lib/types";
-import { getMockDamageAnalysis } from "@/lib/mock";
 
 interface PhotoCaptureProps {
   onPhotoAnalyzed: (data: { analysis: DamageAnalysis; photoUrl: string }) => void;
@@ -43,9 +43,8 @@ export default function PhotoCapture({ onPhotoAnalyzed }: PhotoCaptureProps) {
         onPhotoAnalyzed({ analysis: data.analysis, photoUrl: base64Data });
       } catch (err) {
         console.error(err);
-        // Fallback for UI robustness during hackathon
-        setStatus("done");
-        import("@/lib/mock").then(m => onPhotoAnalyzed(m.getMockDamageAnalysis()));
+        setStatus("idle");
+        setPreviewUrl(null);
       }
     };
     reader.readAsDataURL(file);
@@ -76,7 +75,7 @@ export default function PhotoCapture({ onPhotoAnalyzed }: PhotoCaptureProps) {
 
         {(status === "uploading" || status === "analyzing" || status === "done") && previewUrl && (
           <div className="relative w-full h-[300px] rounded-2xl overflow-hidden">
-            <img src={previewUrl} alt="Crop damage" className="w-full h-full object-cover" />
+            <Image src={previewUrl} alt="Crop damage" fill unoptimized className="w-full h-full object-cover" />
             
             <AnimatePresence>
               {status === "analyzing" && (

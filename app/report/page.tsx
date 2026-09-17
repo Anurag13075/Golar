@@ -13,12 +13,12 @@ import DamageAnalysisCard from "@/components/report/damage-analysis-card";
 import ClaimForm from "@/components/report/claim-form";
 import Confirmation from "@/components/report/confirmation";
 
-import type { VoiceTranscription, DamageAnalysis, Claim, MismatchCheck } from "@/lib/types";
-import { getMockClaim, getMockMismatchChecks } from "@/lib/mock";
+import type { VoiceTranscription, DamageAnalysis, Claim, MismatchCheck, PhotoEvidence } from "@/lib/types";
 
 export default function ReportPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [damageDate, setDamageDate] = useState<string | null>(null);
+  const [policyNumber, setPolicyNumber] = useState("");
   
   const [transcription, setTranscription] = useState<VoiceTranscription | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
@@ -27,52 +27,65 @@ export default function ReportPage() {
   const [mismatchChecks, setMismatchChecks] = useState<MismatchCheck[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [submissionResult, setSubmissionResult] = useState<{ referenceNumber: string; claimId: string } | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleTranscriptionComplete = (data: VoiceTranscription) => {
+    setError(null);
     setTranscription(data);
     if (data.extracted?.damage_date) {
       setDamageDate(data.extracted.damage_date);
-    } else {
-      // Default: assume damage happened today
-      setDamageDate(new Date().toISOString());
     }
   };
 
   const handlePhotoAnalyzed = (data: { analysis: DamageAnalysis; photoUrl: string }) => {
+    setError(null);
     setPhotoUrl(data.photoUrl);
     setAnalysis(data.analysis);
   };
 
   const prepareClaimData = async () => {
+    if (!transcription || !analysis || !damageDate || !policyNumber.trim() || !photoUrl) {
+      setError("Policy number, damage date, voice report, and photo evidence are required.");
+      return;
+    }
     setIsProcessing(true);
     try {
       const res = await fetch("/api/build-claim", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ voice_data: transcription, damage_analysis: analysis, damage_date: damageDate }),
+        body: JSON.stringify({
+          policy_number: policyNumber.trim(),
+          voice_data: transcription,
+          damage_analysis: analysis,
+          damage_date: damageDate,
+          photos: photoUrl ? [{
+            s3_key: "",
+            url: photoUrl,
+            timestamp: new Date().toISOString(),
+            analysis,
+          } satisfies PhotoEvidence] : [],
+        }),
       });
       const json = await res.json();
-      if (json.success) {
-        setClaim(json.data.claim);
-        setMismatchChecks(json.data.mismatch_checks);
-        setIsProcessing(false);
-        setCurrentStep(3);
-        return;
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Unable to build claim");
       }
-    } catch {
-      // fallback
+      setClaim(json.data.claim);
+      setMismatchChecks(json.data.mismatch_checks);
+      setCurrentStep(3);
+    } catch (error) {
+      console.error("Claim preparation failed:", error);
+      setError(error instanceof Error ? error.message : "Unable to prepare claim");
+    } finally {
+      setIsProcessing(false);
     }
-    setClaim(getMockClaim());
-    setMismatchChecks(getMockMismatchChecks());
-    setIsProcessing(false);
-    setCurrentStep(3);
   };
 
   const handleSubmitClaim = async () => {
     if (!claim) return;
     setIsProcessing(true);
     try {
-      const res = await fetch("/api/claims", {
+      const res = await fetch("/api/submit-claim", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ claim }),
@@ -83,14 +96,14 @@ export default function ReportPage() {
         throw new Error(json.error || "Failed to submit claim");
       }
 
-      setSubmissionResult({ 
-        referenceNumber: `PMFBY-${new Date().getFullYear()}-RJ-${Math.floor(1000 + Math.random() * 9000)}`, 
-        claimId: claim.id 
+      setSubmissionResult({
+        referenceNumber: json.data.reference_number,
+        claimId: json.data.claim_id,
       });
       setCurrentStep(4);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Submission failed:", error);
-      alert(error.message || "Failed to submit claim to DynamoDB. Please try again.");
+      setError(error instanceof Error ? error.message : "Failed to submit claim");
     } finally {
       setIsProcessing(false);
     }
@@ -107,7 +120,7 @@ export default function ReportPage() {
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
   const canProceed = () => {
-    if (currentStep === 1) return transcription !== null;
+    if (currentStep === 1) return transcription !== null && Boolean(policyNumber.trim()) && Boolean(damageDate);
     if (currentStep === 2) return analysis !== null;
     if (currentStep === 3) return !mismatchChecks.some((c) => c.status === "fail");
     return false;
@@ -122,6 +135,11 @@ export default function ReportPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-8">
+        {error && (
+          <div role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+            {error}
+          </div>
+        )}
         {currentStep < 4 && (
           <>
             <CountdownTimer damageDate={damageDate} />
@@ -143,6 +161,24 @@ export default function ReportPage() {
                   <h1 className="text-2xl font-bold text-slate-900">Describe the Damage</h1>
                   <p className="text-slate-500 font-medium">Tell us what happened to your crop. / अपनी फसल को क्या हुआ बताएं।</p>
                 </div>
+                <label className="block space-y-2">
+                  <span className="text-sm font-bold text-slate-700">PMFBY Policy Number</span>
+                  <input
+                    value={policyNumber}
+                    onChange={(event) => setPolicyNumber(event.target.value)}
+                    placeholder="Enter your policy number"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-medium text-slate-900 outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+                <label className="block space-y-2">
+                  <span className="text-sm font-bold text-slate-700">Date of Damage</span>
+                  <input
+                    type="date"
+                    value={damageDate ? damageDate.slice(0, 10) : ""}
+                    onChange={(event) => setDamageDate(event.target.value ? new Date(`${event.target.value}T00:00:00`).toISOString() : null)}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-medium text-slate-900 outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
                 <VoiceRecorder onTranscriptionComplete={handleTranscriptionComplete} />
                 
                 {transcription && (

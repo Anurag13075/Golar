@@ -25,7 +25,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ analysis });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Vision Analysis Error:", error);
     return NextResponse.json({ error: "Failed to analyze photo" }, { status: 500 });
   }

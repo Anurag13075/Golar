@@ -10,7 +10,7 @@ const groq = new Groq({
  */
 export async function invokeGroqText(prompt: string, systemPrompt?: string): Promise<string> {
   try {
-    const messages: any[] = [];
+    const messages: Array<{ role: "system" | "user"; content: string }> = [];
     if (systemPrompt) {
       messages.push({ role: "system", content: systemPrompt });
     }
@@ -23,7 +23,7 @@ export async function invokeGroqText(prompt: string, systemPrompt?: string): Pro
     });
 
     return completion.choices[0]?.message?.content || "";
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Groq Text Error:", error);
     throw error;
   }
@@ -60,7 +60,7 @@ export async function invokeGroqVision(base64Image: string, prompt: string): Pro
     });
 
     return completion.choices[0]?.message?.content || "";
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Groq Vision Error:", error);
     throw error;
   }
@@ -77,7 +77,7 @@ export async function transcribeGroqAudio(file: File): Promise<string> {
     });
 
     return transcription.text;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Groq Audio Error:", error);
     throw error;
   }

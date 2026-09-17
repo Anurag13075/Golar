@@ -17,7 +17,8 @@ const AGENT_DATA = {
 export default function AgentChatPage() {
   const params = useParams();
   const agentId = params.agentId as keyof typeof AGENT_DATA;
-  const agent = AGENT_DATA[agentId] || AGENT_DATA.advocate;
+  const configuredAgent = AGENT_DATA[agentId];
+  const agent = configuredAgent || AGENT_DATA.advocate;
   const Icon = agent.icon;
 
   const [messages, setMessages] = useState<{role: "user"|"agent", content: string}[]>([
@@ -48,13 +49,28 @@ export default function AgentChatPage() {
       });
       
       const data = await res.json();
+      if (!res.ok || typeof data.reply !== "string") {
+        throw new Error(data.error || "Agent request failed");
+      }
       setMessages(prev => [...prev, { role: "agent", content: data.reply }]);
     } catch (err) {
-      setMessages(prev => [...prev, { role: "agent", content: "Sorry, my systems are currently experiencing heavy load. Please try again in a moment." }]);
+      console.error("Agent chat failed:", err);
+      setMessages(prev => [...prev, { role: "agent", content: "The agent is unavailable. Please check your connection and try again." }]);
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (!configuredAgent) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 text-center">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Agent not found</h1>
+          <Link href="/marketplace" className="text-blue-600 font-semibold">Back to Marketplace</Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
@@ -155,7 +171,7 @@ function TypewriterText({ text }: { text: string }) {
   
   useEffect(() => {
     let i = 0;
-    setDisplayed("");
+  const resetTimer = setTimeout(() => setDisplayed(""), 0);
     const timer = setInterval(() => {
       if (i < text.length) {
         setDisplayed(prev => prev + text.charAt(i));
@@ -164,7 +180,10 @@ function TypewriterText({ text }: { text: string }) {
         clearInterval(timer);
       }
     }, 15);
-    return () => clearInterval(timer);
+    return () => {
+      clearTimeout(resetTimer);
+      clearInterval(timer);
+    };
   }, [text]);
 
   return <p className="whitespace-pre-wrap font-medium">{displayed}</p>;

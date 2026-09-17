@@ -33,8 +33,6 @@ export default function StepIndicator({ currentStep }: StepIndicatorProps) {
         {steps.map((step) => {
           const isActive = currentStep === step.id;
           const isCompleted = currentStep > step.id;
-          const isPending = currentStep < step.id;
-
           return (
             <div key={step.id} className="relative z-10 flex flex-col items-center gap-2">
               <motion.div

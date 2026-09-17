@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Calendar, AlertCircle, FileWarning, ArrowRight } from "lucide-react";
+import { Calendar, AlertCircle, FileWarning, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { Claim } from "@/lib/types";
 

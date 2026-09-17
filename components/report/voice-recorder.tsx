@@ -54,8 +54,7 @@ export default function VoiceRecorder({ onTranscriptionComplete }: VoiceRecorder
       console.error("Unable to start audio recording:", err);
       mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
       mediaStreamRef.current = null;
-      setStatus("done");
-      import("@/lib/mock").then((m) => onTranscriptionComplete(m.getMockTranscription()));
+      setStatus("idle");
     }
   };
 
@@ -78,8 +77,7 @@ export default function VoiceRecorder({ onTranscriptionComplete }: VoiceRecorder
         onTranscriptionComplete(data);
       } catch (err) {
         console.error(err);
-        setStatus("done");
-        import("@/lib/mock").then((m) => onTranscriptionComplete(m.getMockTranscription()));
+        setStatus("idle");
       }
     };
     recorder.stop();
@@ -100,8 +98,7 @@ export default function VoiceRecorder({ onTranscriptionComplete }: VoiceRecorder
       onTranscriptionComplete(data);
     } catch (err) {
       console.error(err);
-      setStatus("done");
-      import("@/lib/mock").then(m => onTranscriptionComplete(m.getMockTranscription(text)));
+      setStatus("idle");
     }
   };
 

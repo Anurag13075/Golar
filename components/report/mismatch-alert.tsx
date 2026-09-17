@@ -14,7 +14,6 @@ export default function MismatchAlert({ check }: MismatchAlertProps) {
 
   const isPass = check.status === "pass";
   const isWarning = check.status === "warning";
-  const isFail = check.status === "fail";
 
   const getStyles = () => {
     if (isPass) return { bg: "bg-emerald-50", border: "border-l-emerald-500 border-emerald-100", icon: <CheckCircle2 className="w-5 h-5 text-emerald-600 mt-0.5" /> };
@@ -36,9 +35,15 @@ export default function MismatchAlert({ check }: MismatchAlertProps) {
         <div className="flex-1 space-y-1">
           <div className="flex items-center justify-between gap-2">
             <h4 className="text-sm font-bold text-slate-900">{check.label}</h4>
-            <span className="text-[10px] font-bold uppercase tracking-wider opacity-70 px-2 py-0.5 rounded bg-black/5 text-slate-900">
+            <button
+              type="button"
+              onClick={() => setExpanded((value) => !value)}
+              className="text-[10px] font-bold uppercase tracking-wider opacity-70 px-2 py-0.5 rounded bg-black/5 text-slate-900 inline-flex items-center gap-1"
+              aria-expanded={expanded}
+            >
               {check.status}
-            </span>
+              {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            </button>
           </div>
           
           <p className={`text-sm mt-1 ${isPass ? 'text-slate-500' : 'text-slate-300'}`}>

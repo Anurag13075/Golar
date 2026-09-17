@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Scale, AlertTriangle, FileText, Loader2, Download, Send } from "lucide-react";
 import type { Claim } from "@/lib/types";
@@ -10,7 +10,6 @@ import Navbar from "@/components/shared/navbar";
 
 export default function AppealPage() {
   const params = useParams();
-  const router = useRouter();
   const [claim, setClaim] = useState<Claim | null>(null);
   const [appeal, setAppeal] = useState<{
     appeal_text: string;

@@ -24,7 +24,7 @@ export default function ProblemCards() {
             <div className="p-4 pt-6">
               <h3 className="text-xl font-bold text-slate-900 mb-2">miss the 72-hour window</h3>
               <p className="text-slate-500 leading-relaxed font-medium">
-                Farmers must report damage within 72 hours. Most don't know, leading to auto-rejection before assessment begins.
+                Farmers must report damage within 72 hours. Most don&apos;t know, leading to auto-rejection before assessment begins.
               </p>
             </div>
           </motion.div>

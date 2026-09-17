@@ -9,6 +9,7 @@ import ClaimCard from "@/components/claims/claim-card";
 export default function ClaimsPage() {
   const [claims, setClaims] = useState<Claim[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadClaims = async () => {
@@ -19,6 +20,7 @@ export default function ClaimsPage() {
         setClaims(data.claims || []);
       } catch (error) {
         console.error("Error loading claims:", error);
+        setError(error instanceof Error ? error.message : "Unable to load claims");
       } finally {
         setLoading(false);
       }
@@ -73,10 +75,15 @@ export default function ClaimsPage() {
               </div>
             ))}
           </div>
+        ) : error ? (
+          <div role="alert" className="bg-red-50 border border-red-200 rounded-3xl p-10 text-center shadow-sm">
+            <h2 className="text-xl font-bold text-red-800 mb-2">Claims are temporarily unavailable</h2>
+            <p className="text-red-700">{error}</p>
+          </div>
         ) : claims.length === 0 ? (
           <div className="bg-white border border-slate-200 rounded-3xl p-10 text-center shadow-sm">
             <h2 className="text-xl font-bold text-slate-900 mb-2">No claims found</h2>
-            <p className="text-slate-500 mb-6">You haven't filed any crop damage reports yet.</p>
+            <p className="text-slate-500 mb-6">You haven&apos;t filed any crop damage reports yet.</p>
             <Link href="/report">
               <button className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 shadow-sm transition-colors">
                 Report Crop Damage

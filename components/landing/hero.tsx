@@ -2,19 +2,23 @@
 
 import { motion } from "motion/react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="relative pt-36 pb-20 w-full min-h-[90vh] flex flex-col items-center overflow-hidden bg-[#0A74F0]">
+    <section className="relative pt-36 pb-20 w-full min-h-[90vh] flex flex-col items-center overflow-hidden">
       {/* Background Image / Sky Vibe */}
-      <div className="absolute inset-0 z-0">
-        <img 
+      <div className="absolute inset-0 z-0 bg-slate-900">
+        <Image
           src="/hero-bg.png" 
-          className="w-full h-full object-cover opacity-90 mix-blend-overlay"
+          fill
+          priority
+          className="w-full h-full object-cover opacity-90"
           alt="Bright Sky"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0A74F0]/60 via-[#298BFE]/40 to-[#60A5FA]/20" />
+        {/* Subtle gradient to ensure white text is readable against the bright sky */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-transparent" />
       </div>
 
       <div className="relative z-10 text-center max-w-4xl mx-auto mt-12 px-4">
@@ -96,9 +100,11 @@ export default function Hero() {
             </div>
             {/* App UI Image */}
             <div className="relative aspect-[16/10] bg-slate-100 w-full overflow-hidden flex items-center justify-center group">
-              <img 
+              <Image
                 src="/hero-mockup.png" 
                 alt="Fasal Rakshak App Interface" 
+                fill
+                sizes="95vw"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
               />
             </div>

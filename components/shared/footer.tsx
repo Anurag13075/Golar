@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -11,7 +10,7 @@ export default function Footer() {
             🌾 Fasal Rakshak
           </div>
           <p className="text-sm text-slate-500 font-medium">
-            Protecting farmers' claims, one report at a time.
+            Protecting farmers&apos; claims, one report at a time.
           </p>
         </div>
         

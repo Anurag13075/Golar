@@ -20,8 +20,22 @@ export default function Confirmation({ referenceNumber, claimId }: ConfirmationP
   };
 
   const handleShare = () => {
-    const text = `Fasal Rakshak Claim Submitted. Ref No: ${referenceNumber}. Please process within 21 days as per PMFBY Section 12.1.`;
+    const text = `Fasal Rakshak Claim Submitted. Ref No: ${referenceNumber}. Claim ID: ${claimId}. Please process within 21 days as per PMFBY Section 12.1.`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
+  const handleListen = async () => {
+    const response = await fetch("/api/speak-confirmation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reference_number: referenceNumber, language: "hi" }),
+    });
+    const result = await response.json();
+    if (!response.ok || !result.success) {
+      throw new Error(result.error || "Unable to generate confirmation audio");
+    }
+    const audio = new Audio(`data:${result.data.content_type};base64,${result.data.audio_base64}`);
+    await audio.play();
   };
 
   return (
@@ -56,7 +70,7 @@ export default function Confirmation({ referenceNumber, claimId }: ConfirmationP
         </button>
       </div>
 
-      <button className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 py-2.5 px-5 rounded-full transition-colors mb-8 border border-blue-200 font-semibold">
+      <button onClick={() => void handleListen()} className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 py-2.5 px-5 rounded-full transition-colors mb-8 border border-blue-200 font-semibold">
         <Volume2 className="w-4 h-4" />
         Listen to confirmation in Hindi
       </button>
