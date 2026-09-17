@@ -5,15 +5,14 @@ import { NOVA_PROMPTS } from "@/lib/prompts";
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
-    const audioFile = formData.get("audio") as Blob;
+    const audioFile = formData.get("audio");
 
-    if (!audioFile) {
+    if (!(audioFile instanceof File) || audioFile.size === 0) {
       return NextResponse.json({ error: "No audio file provided" }, { status: 400 });
     }
 
     // 1. Transcribe audio using Groq Whisper
-    const file = new File([audioFile], "audio.webm", { type: audioFile.type });
-    const transcript = await transcribeGroqAudio(file);
+    const transcript = await transcribeGroqAudio(audioFile);
 
     // 2. Extract structured data using Groq Text
     const extractionPrompt = `Here is the transcribed text of the farmer's report. Please extract the details according to the system prompt guidelines.\n\nTranscription:\n"${transcript}"`;
@@ -35,7 +34,7 @@ export async function POST(req: Request) {
       extractedData: extractedData
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error("Transcription/Extraction Error:", error);
     return NextResponse.json({ error: "Failed to process audio report" }, { status: 500 });
   }

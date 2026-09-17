@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Mic, Square, Loader2, CheckCircle2, Type, X } from "lucide-react";
 import type { VoiceTranscription } from "@/lib/types";
-import { getMockTranscription } from "@/lib/mock";
 
 interface VoiceRecorderProps {
   onTranscriptionComplete: (data: VoiceTranscription) => void;
@@ -14,32 +13,76 @@ export default function VoiceRecorder({ onTranscriptionComplete }: VoiceRecorder
   const [status, setStatus] = useState<"idle" | "recording" | "processing" | "done">("idle");
   const [textMode, setTextMode] = useState(false);
   const [text, setText] = useState("");
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
-  const startRecording = () => {
-    setStatus("recording");
+  const processAudio = async (audioBlob: Blob) => {
+    const extension = audioBlob.type.includes("mp4") ? "m4a" : "webm";
+    const formData = new FormData();
+    formData.append("audio", new File([audioBlob], `audio.${extension}`, {
+      type: audioBlob.type,
+    }));
+
+    const res = await fetch("/api/transcribe", {
+      method: "POST",
+      body: formData,
+    });
+    if (!res.ok) throw new Error("Transcription failed");
+    return res.json();
   };
 
-  const stopRecording = async () => {
-    setStatus("processing");
+  const startRecording = async () => {
     try {
-      // In a real app we'd post the audio Blob here as FormData
-      // For this hackathon step we'll trigger the text pipeline using a FormData mock signal
-      const formData = new FormData();
-      formData.append("audio", new Blob(["dummy_audio"], { type: "audio/webm" }));
-      
-      const res = await fetch("/api/transcribe", {
-        method: "POST",
-        body: formData,
-      });
-      if (!res.ok) throw new Error("Transcription failed");
-      const data = await res.json();
-      setStatus("done");
-      onTranscriptionComplete(data);
+      if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+        throw new Error("Audio recording is not supported by this browser");
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"]
+        .find((type) => MediaRecorder.isTypeSupported(type));
+
+      mediaStreamRef.current = stream;
+      audioChunksRef.current = [];
+      mediaRecorderRef.current = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        if (event.data.size > 0) audioChunksRef.current.push(event.data);
+      };
+      mediaRecorderRef.current.start();
+      setStatus("recording");
     } catch (err) {
-      console.error(err);
+      console.error("Unable to start audio recording:", err);
+      mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
+      mediaStreamRef.current = null;
       setStatus("done");
-      import("@/lib/mock").then(m => onTranscriptionComplete(m.getMockTranscription()));
+      import("@/lib/mock").then((m) => onTranscriptionComplete(m.getMockTranscription()));
     }
+  };
+
+  const stopRecording = () => {
+    const recorder = mediaRecorderRef.current;
+    if (!recorder || recorder.state === "inactive") return;
+
+    setStatus("processing");
+    recorder.onstop = async () => {
+      const audioBlob = new Blob(audioChunksRef.current, {
+        type: recorder.mimeType || "audio/webm",
+      });
+      mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
+      mediaStreamRef.current = null;
+      mediaRecorderRef.current = null;
+
+      try {
+        const data = await processAudio(audioBlob);
+        setStatus("done");
+        onTranscriptionComplete(data);
+      } catch (err) {
+        console.error(err);
+        setStatus("done");
+        import("@/lib/mock").then((m) => onTranscriptionComplete(m.getMockTranscription()));
+      }
+    };
+    recorder.stop();
   };
 
   const submitText = async () => {
