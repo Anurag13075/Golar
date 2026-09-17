@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Scale, AlertTriangle, FileText, Loader2, Download, Send } from "lucide-react";
-import type { Claim, Appeal } from "@/lib/types";
-import { DEMO_SCHEMES } from "@/data/schemes";
+import type { Claim } from "@/lib/types";
 import { motion } from "motion/react";
 import Navbar from "@/components/shared/navbar";
 
@@ -13,28 +12,27 @@ export default function AppealPage() {
   const params = useParams();
   const router = useRouter();
   const [claim, setClaim] = useState<Claim | null>(null);
-  const [appeal, setAppeal] = useState<Appeal | null>(null);
+  const [appeal, setAppeal] = useState<{
+    appeal_text: string;
+    cited_guidelines: Array<{ section: string; description: string }>;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
-    // Mock loading claim
-    const mockClaim: Claim = {
-      id: params.id as string,
-      reference_number: "FR-2026-89A4",
-      policy: DEMO_SCHEMES.farmer_profiles[0],
-      damage_type: "hailstorm",
-      severity_percent: 65,
-      damage_date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-      status: "rejected",
-      rejection_reason: "Claim filed after 72 hours of incident.",
-      created_at: new Date().toISOString()
+    const fetchClaim = async () => {
+      try {
+        const res = await fetch(`/api/claims/${params.id}`);
+        if (!res.ok) throw new Error("Failed to fetch claim");
+        const data = await res.json();
+        setClaim(data.claim);
+      } catch (error) {
+        console.error("Error fetching claim:", error);
+      } finally {
+        setLoading(false);
+      }
     };
-    
-    setTimeout(() => {
-      setClaim(mockClaim);
-      setLoading(false);
-    }, 500);
+    fetchClaim();
   }, [params.id]);
 
   const handleGenerateAppeal = async () => {

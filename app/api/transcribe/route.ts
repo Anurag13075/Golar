@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { transcribeGroqAudio, invokeGroqText } from "@/lib/groq";
-import { DAMAGE_EXTRACTION_PROMPT } from "@/lib/prompts";
+import { NOVA_PROMPTS } from "@/lib/prompts";
 
 export async function POST(req: Request) {
   try {
@@ -12,14 +12,13 @@ export async function POST(req: Request) {
     }
 
     // 1. Transcribe audio using Groq Whisper
-    // We need to convert Blob to File for Groq SDK
     const file = new File([audioFile], "audio.webm", { type: audioFile.type });
     const transcript = await transcribeGroqAudio(file);
 
     // 2. Extract structured data using Groq Text
     const extractionPrompt = `Here is the transcribed text of the farmer's report. Please extract the details according to the system prompt guidelines.\n\nTranscription:\n"${transcript}"`;
     
-    let rawResponse = await invokeGroqText(extractionPrompt, DAMAGE_EXTRACTION_PROMPT);
+    let rawResponse = await invokeGroqText(extractionPrompt, NOVA_PROMPTS.EXTRACTION_SYSTEM);
     
     // Clean JSON response (strip markdown backticks if present)
     const jsonMatch = rawResponse.match(/```json\n([\s\S]*)\n```/);

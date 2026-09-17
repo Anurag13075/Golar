@@ -69,6 +69,7 @@ export default function ReportPage() {
   };
 
   const handleSubmitClaim = async () => {
+    if (!claim) return;
     setIsProcessing(true);
     try {
       const res = await fetch("/api/claims", {

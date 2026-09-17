@@ -13,7 +13,11 @@ export default function ClaimCard({ claim }: ClaimCardProps) {
     switch (claim.status) {
       case "approved": return "bg-emerald-50 text-emerald-700 border-emerald-200";
       case "rejected": return "bg-red-50 text-red-700 border-red-200";
-      case "pending": return "bg-amber-50 text-amber-700 border-amber-200";
+      case "draft":
+      case "under_review":
+      case "appealed":
+      case "submitted":
+        return "bg-amber-50 text-amber-700 border-amber-200";
     }
   };
 

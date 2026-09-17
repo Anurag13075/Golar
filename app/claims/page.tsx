@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import type { Claim } from "@/lib/types";
-import { DEMO_SCHEMES } from "@/data/schemes";
 import ClaimCard from "@/components/claims/claim-card";
 
 export default function ClaimsPage() {

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { invokeGroqVision } from "@/lib/groq";
-import { PHOTO_ANALYSIS_PROMPT } from "@/lib/prompts";
+import { NOVA_PROMPTS } from "@/lib/prompts";
 
 export async function POST(req: Request) {
   try {
@@ -10,7 +10,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No image provided" }, { status: 400 });
     }
 
-    const rawResponse = await invokeGroqVision(image, PHOTO_ANALYSIS_PROMPT);
+    const rawResponse = await invokeGroqVision(image, NOVA_PROMPTS.VISION_SYSTEM);
     
     // Clean JSON response (strip markdown backticks if present)
     let cleanedResponse = rawResponse;

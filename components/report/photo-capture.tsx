@@ -7,7 +7,7 @@ import type { DamageAnalysis } from "@/lib/types";
 import { getMockDamageAnalysis } from "@/lib/mock";
 
 interface PhotoCaptureProps {
-  onPhotoAnalyzed: (data: DamageAnalysis) => void;
+  onPhotoAnalyzed: (data: { analysis: DamageAnalysis; photoUrl: string }) => void;
 }
 
 export default function PhotoCapture({ onPhotoAnalyzed }: PhotoCaptureProps) {
@@ -40,7 +40,7 @@ export default function PhotoCapture({ onPhotoAnalyzed }: PhotoCaptureProps) {
         
         const data = await res.json();
         setStatus("done");
-        onPhotoAnalyzed(data);
+        onPhotoAnalyzed({ analysis: data.analysis, photoUrl: base64Data });
       } catch (err) {
         console.error(err);
         // Fallback for UI robustness during hackathon
@@ -127,7 +127,7 @@ export default function PhotoCapture({ onPhotoAnalyzed }: PhotoCaptureProps) {
                 <motion.div 
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  type="spring"
+                  transition={{ type: "spring" }}
                   className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/30"
                 >
                   <CheckCircle2 className="w-8 h-8 text-white" />
