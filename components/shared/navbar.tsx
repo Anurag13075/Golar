@@ -39,6 +39,10 @@ export default function Navbar() {
             <Link href="/claims" className="text-[14px] font-medium text-slate-500 hover:text-slate-900 transition-colors">
               My Claims
             </Link>
+            <Link href="/defense/demo" className="text-[14px] font-medium text-indigo-500 hover:text-indigo-700 transition-colors flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+              Agent Defense
+            </Link>
           </div>
         </div>
 
