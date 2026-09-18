@@ -14,11 +14,10 @@ export default function Hero() {
           src="/hero-bg.png" 
           fill
           priority
-          className="w-full h-full object-cover opacity-90"
+          className="w-full h-full object-cover object-top opacity-100"
           alt="Bright Sky"
         />
-        {/* Subtle gradient to ensure white text is readable against the bright sky */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/20 via-transparent to-slate-950/10" />
       </div>
 
       <div className="relative z-10 text-center max-w-4xl mx-auto mt-12 px-4">

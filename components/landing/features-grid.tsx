@@ -1,145 +1,206 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Mic, Image as ImageIcon, Scale, ShieldAlert, BadgeCheck, Phone, Zap } from "lucide-react";
+import { Mic, FileText, CheckCircle2, MapPin, Camera } from "lucide-react";
 
 export default function FeaturesGrid() {
   return (
-    <section className="py-32 bg-slate-50 border-t border-slate-100 px-4 overflow-hidden relative">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-20 max-w-3xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
-            An ecosystem built for <span className="text-blue-600">protection.</span>
+    <section className="py-24 bg-[#F5F5F7] px-4 sm:px-6">
+      <div className="max-w-[1200px] mx-auto">
+        <div className="mb-16 text-center max-w-3xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-6 tracking-tight">
+            Replace bureaucratic friction with AI.
           </h2>
-          <p className="text-xl text-slate-500 font-medium leading-relaxed">
-            Every feature is designed to eliminate friction between a farmer's disaster and their rightful PMFBY insurance payout.
+          <p className="text-lg text-slate-500 font-medium">
+            A complete ecosystem designed to ensure farmers never lose a legitimate PMFBY claim to a technicality again.
           </p>
         </div>
 
-        {/* Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[280px]">
+        {/* 4-Column Bento Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:auto-rows-[24rem]">
           
-          {/* Feature 1: Large Horizontal */}
+          {/* 1. Tall Left Card (Dark) - Voice Intake */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="md:col-span-2 lg:col-span-2 bg-gradient-to-br from-blue-600 to-blue-800 rounded-[2rem] p-8 md:p-10 relative overflow-hidden text-white shadow-2xl shadow-blue-900/20 group"
+            className="md:col-span-1 md:row-span-2 rounded-[32px] bg-[#0A0A0A] p-1 flex flex-col relative overflow-hidden group"
           >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="relative z-10 flex flex-col h-full justify-between">
-              <div>
-                <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center mb-6">
-                  <Mic className="w-6 h-6 text-white" />
+            <DotPattern />
+            
+            {/* Fake Browser/Chat UI */}
+            <div className="flex-1 mt-6 mx-4 relative z-10">
+              <div className="w-full h-full bg-[#111111] rounded-t-2xl border border-white/10 shadow-2xl overflow-hidden flex flex-col">
+                <div className="h-8 border-b border-white/5 flex items-center px-3 gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
                 </div>
-                <h3 className="text-2xl font-bold mb-3 tracking-tight">Voice-First Intake in Hindi & Local Dialects</h3>
-                <p className="text-blue-100 max-w-md font-medium text-lg leading-relaxed">
-                  No complex forms to type. Farmers simply describe their crop damage naturally, and our AI perfectly structures the claim for PMFBY.
-                </p>
+                <div className="p-4 flex flex-col gap-3">
+                  <div className="self-end bg-blue-600 text-white text-[10px] py-1.5 px-3 rounded-2xl rounded-tr-sm max-w-[85%]">
+                    "Mere khet mein baarish se gehu kharab ho gaya hai."
+                  </div>
+                  <div className="self-start bg-white/10 text-white/80 text-[10px] py-1.5 px-3 rounded-2xl rounded-tl-sm max-w-[85%]">
+                    Claim structured. PMFBY forms auto-filled.
+                  </div>
+                  <div className="mt-auto self-center p-3 bg-white/5 rounded-full mb-2 group-hover:scale-110 transition-transform duration-500">
+                    <Mic className="w-5 h-5 text-blue-400" />
+                  </div>
+                </div>
               </div>
-              
-              {/* Decorative Audio Wave */}
-              <div className="absolute bottom-0 right-0 w-3/4 opacity-30 group-hover:opacity-60 transition-opacity duration-700">
-                <svg viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M0 50 Q 20 20 40 50 T 80 50 T 120 50 T 160 50 T 200 50" stroke="white" strokeWidth="10" strokeLinecap="round" className="animate-pulse" />
-                  <path d="M200 50 Q 220 80 240 50 T 280 50 T 320 50 T 360 50 T 400 50" stroke="white" strokeWidth="10" strokeLinecap="round" className="animate-pulse" style={{ animationDelay: '0.2s' }}/>
-                </svg>
-              </div>
+            </div>
+
+            {/* Content Bottom */}
+            <div className="relative z-10 p-6 pt-4 mt-auto">
+              <h3 className="text-xl font-medium text-white mb-2 tracking-tight">Voice-First Intake</h3>
+              <p className="text-sm text-white/50 leading-relaxed font-medium">
+                Designed to perfection, our AI captures farmer dialects and automatically maps them to PMFBY insurance standards.
+              </p>
             </div>
           </motion.div>
 
-          {/* Feature 2: Tall Vertical */}
+          {/* 2. Middle Top (Light) - Automated Compliance */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="md:col-span-1 lg:col-span-1 row-span-2 bg-slate-900 rounded-[2rem] p-8 md:p-10 relative overflow-hidden text-white shadow-xl group"
+            className="md:col-span-1 md:row-span-1 rounded-[32px] bg-white border border-slate-200/60 p-6 flex flex-col relative overflow-hidden shadow-sm"
           >
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-            <div className="relative z-10 flex flex-col h-full">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mb-6">
-                <ImageIcon className="w-6 h-6 text-emerald-400" />
+            <div className="relative z-10 mb-4">
+              <h3 className="text-lg font-medium text-slate-900 tracking-tight mb-1">Automated Compliance</h3>
+              <p className="text-xs text-slate-500 font-medium">Pre-validation check</p>
+            </div>
+            
+            {/* Fake Pie Chart UI */}
+            <div className="flex-1 flex items-center justify-center relative z-10 mt-2">
+              <div className="w-32 h-32 relative">
+                <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="#F1F5F9" strokeWidth="12" />
+                  <motion.circle cx="50" cy="50" r="40" fill="none" stroke="#EAB308" strokeWidth="12" strokeDasharray="251.2" initial={{ strokeDashoffset: 251.2 }} whileInView={{ strokeDashoffset: 60 }} transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }} />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <CheckCircle2 className="w-6 h-6 text-yellow-500 mb-1" />
+                </div>
               </div>
-              <h3 className="text-2xl font-bold mb-4 tracking-tight">Vision AI Assessment</h3>
-              <p className="text-slate-400 font-medium leading-relaxed mb-8">
-                Farmers upload a photo of their field. Our multimodal AI identifies the crop, detects the exact disease or damage type, and estimates severity instantly—acting as an incorruptible first assessor.
-              </p>
-              
-              <div className="mt-auto relative rounded-2xl overflow-hidden border border-slate-700/50 bg-slate-800/50 aspect-[4/5] group-hover:border-emerald-500/50 transition-colors duration-500 flex items-center justify-center">
-                {/* Simulated image scanning effect */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/20 to-transparent h-[20%] w-full animate-[scan_3s_ease-in-out_infinite]" />
-                <BadgeCheck className="w-16 h-16 text-emerald-500/20 group-hover:text-emerald-400 transition-colors duration-500" />
-              </div>
+            </div>
+
+            {/* Notification Toast */}
+            <div className="relative z-10 mt-auto bg-white border border-slate-100 shadow-lg shadow-slate-200/40 rounded-xl p-3 flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-emerald-500" />
+              <div className="text-xs font-semibold text-slate-700">Aadhaar & Bank Linked</div>
             </div>
           </motion.div>
 
-          {/* Feature 3: Standard Square */}
+          {/* 3. Right Top (Dark) - Vision AI / Map */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="md:col-span-1 lg:col-span-1 bg-white rounded-[2rem] p-8 border border-slate-200 shadow-xl shadow-slate-200/50 relative overflow-hidden hover:border-orange-200 transition-colors"
+            className="md:col-span-2 md:row-span-1 rounded-[32px] bg-[#0A0A0A] p-6 flex flex-col relative overflow-hidden group"
           >
-            <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center mb-5">
-              <ShieldAlert className="w-6 h-6 text-orange-600" />
+            <div className="absolute inset-0 opacity-40">
+              {/* Fake Map Grid */}
+              <div className="w-full h-full" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '16px 16px' }} />
             </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Automated Compliance</h3>
-            <p className="text-slate-500 font-medium">
-              Validates against PMFBY rules in real-time, catching Aadhaar or bank mismatches before they cause a hard rejection.
-            </p>
+
+            {/* Map Nodes (Glowing) */}
+            <div className="absolute top-1/4 left-1/4 w-8 h-8 bg-emerald-500/20 rounded-full flex items-center justify-center animate-pulse">
+              <div className="w-2 h-2 bg-emerald-400 rounded-full" />
+            </div>
+            <div className="absolute top-1/2 right-1/3 w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center animate-pulse delay-75">
+              <div className="w-3 h-3 bg-blue-400 rounded-full" />
+            </div>
+            <div className="absolute bottom-1/4 right-1/4 w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center animate-pulse delay-150">
+              <div className="w-2.5 h-2.5 bg-purple-400 rounded-full" />
+            </div>
+
+            <div className="relative z-10">
+              <h3 className="text-lg font-medium text-white tracking-tight mb-1">Vision AI & Geotagging</h3>
+              <p className="text-xs text-white/50 font-medium">Damage assessed precisely where it happens.</p>
+            </div>
+
+            {/* Fake Camera / Analysis Viewfinder */}
+            <div className="relative z-10 mt-auto self-end w-48 h-32 bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-md flex items-center justify-center group-hover:border-white/20 transition-colors">
+              <div className="absolute inset-4 border border-white/20 border-dashed rounded-lg" />
+              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-emerald-500/0 via-emerald-500/10 to-emerald-500/0 animate-[scan_3s_ease-in-out_infinite]" />
+              <Camera className="w-6 h-6 text-white/40" />
+            </div>
           </motion.div>
 
-          {/* Feature 4: Large Horizontal Bottom */}
+          {/* 4. Middle Bottom (Light) - One-Click Appeals */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="md:col-span-2 lg:col-span-2 bg-emerald-50 rounded-[2rem] p-8 md:p-10 border border-emerald-100 shadow-lg shadow-emerald-100/50 relative overflow-hidden group"
+            className="md:col-span-2 md:row-span-1 rounded-[32px] bg-white border border-slate-200/60 p-6 flex flex-col md:flex-row relative overflow-hidden shadow-sm gap-6"
           >
-            <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center h-full">
-              <div className="flex-1">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-200 flex items-center justify-center mb-6">
-                  <Scale className="w-6 h-6 text-emerald-800" />
+            <LinePattern />
+            
+            <div className="relative z-10 flex-1 flex flex-col">
+              <h3 className="text-lg font-medium text-slate-900 tracking-tight mb-1">One-Click Legal Appeals</h3>
+              <p className="text-xs text-slate-500 font-medium mb-6">Instantly generate bulletproof grievances.</p>
+              
+              {/* Fake Search/Input UI */}
+              <div className="mt-auto bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center gap-3 shadow-inner">
+                <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+                  <div className="w-2 h-2 rounded-full bg-red-500" />
                 </div>
-                <h3 className="text-2xl font-bold text-emerald-950 mb-3 tracking-tight">One-Click Legal Appeals</h3>
-                <p className="text-emerald-800/80 font-medium text-lg leading-relaxed">
-                  If an insurance company wrongfully rejects a claim, our system instantly drafts a legally robust grievance letter citing exact PMFBY clauses.
-                </p>
+                <div className="flex-1">
+                  <div className="text-[10px] text-slate-400 font-medium">Rejection Reason</div>
+                  <div className="text-xs text-slate-700 font-semibold truncate">Claim filed after 72 hours.</div>
+                </div>
+                <div className="px-3 py-1.5 bg-white shadow-sm border border-slate-200 rounded-lg text-[10px] font-bold text-slate-900">
+                  Draft Appeal
+                </div>
               </div>
-              <div className="hidden md:flex shrink-0 w-48 h-48 bg-white rounded-2xl border border-emerald-200 shadow-sm items-center justify-center p-6 text-emerald-900/40 group-hover:scale-105 group-hover:-rotate-2 transition-transform duration-500">
-                <FileTextMockup />
+            </div>
+
+            {/* Fake Document Graphic */}
+            <div className="relative z-10 w-full md:w-40 h-32 md:h-full bg-slate-100 rounded-xl border border-slate-200/60 p-3 shadow-inner shrink-0 overflow-hidden">
+              <div className="w-full h-2 bg-slate-200 rounded-full mb-3" />
+              <div className="w-3/4 h-1.5 bg-slate-200 rounded-full mb-1.5" />
+              <div className="w-5/6 h-1.5 bg-slate-200 rounded-full mb-1.5" />
+              <div className="w-full h-1.5 bg-slate-200 rounded-full mb-4" />
+              <div className="w-1/2 h-4 bg-emerald-100 border border-emerald-200 rounded mt-auto flex items-center px-1 gap-1">
+                <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
+                <span className="text-[8px] text-emerald-700 font-bold">Clause 11.2 Cited</span>
               </div>
             </div>
           </motion.div>
 
-          {/* Feature 5: Standard Square Bottom */}
+          {/* 5. Right Bottom (Light) - Dashboards & Everything Else */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
-            className="md:col-span-1 lg:col-span-1 bg-white rounded-[2rem] p-8 border border-slate-200 shadow-xl shadow-slate-200/50 hover:border-purple-200 transition-colors"
+            className="md:col-span-1 md:row-span-1 rounded-[32px] bg-white border border-slate-200/60 p-6 flex flex-col relative overflow-hidden shadow-sm"
           >
-            <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center mb-5">
-              <Zap className="w-6 h-6 text-purple-600" />
+            <div className="absolute right-0 bottom-0 w-32 h-32 bg-orange-100/50 rounded-tl-full blur-2xl" />
+            
+            <div className="relative z-10">
+              <h3 className="text-lg font-medium text-slate-900 tracking-tight mb-1">72-Hour Safeguard</h3>
+              <p className="text-xs text-slate-500 font-medium">Immutable timestamps.</p>
             </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">72-Hour Safeguard</h3>
-            <p className="text-slate-500 font-medium">
-              Tracks the critical 72h reporting window, ensuring every claim is logged and timestamped defensively.
-            </p>
+
+            <div className="relative z-10 mt-auto flex justify-end">
+              <div className="w-24 h-24 bg-orange-50 border border-orange-100 rounded-2xl rounded-br-none shadow-sm flex flex-col items-center justify-center gap-1">
+                <span className="text-[10px] text-orange-500 font-bold uppercase tracking-widest">Time Left</span>
+                <span className="text-2xl font-black text-orange-600 tracking-tighter">71:59</span>
+              </div>
+            </div>
           </motion.div>
 
         </div>
       </div>
-      
-      {/* Global CSS for custom animations used in this component */}
+
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes scan {
           0% { transform: translateY(-100%); }
-          50% { transform: translateY(400%); }
+          50% { transform: translateY(100%); }
           100% { transform: translateY(-100%); }
         }
       `}} />
@@ -147,18 +208,25 @@ export default function FeaturesGrid() {
   );
 }
 
-// Simple internal component to draw a tiny fake document
-function FileTextMockup() {
-  return (
-    <div className="w-full h-full flex flex-col gap-3 opacity-50">
-      <div className="w-full h-4 bg-emerald-100 rounded-md" />
-      <div className="w-3/4 h-3 bg-emerald-50 rounded-sm" />
-      <div className="w-5/6 h-3 bg-emerald-50 rounded-sm" />
-      <div className="w-full h-3 bg-emerald-50 rounded-sm" />
-      <div className="mt-auto flex justify-between">
-        <div className="w-12 h-12 rounded-full bg-emerald-100" />
-        <div className="w-16 h-8 bg-emerald-200 rounded-md" />
-      </div>
-    </div>
-  );
-}
+const DotPattern = () => (
+  <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="dotPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+        <circle cx="2" cy="2" r="1" fill="rgba(255,255,255,0.05)"></circle>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#dotPattern)"></rect>
+  </svg>
+);
+
+const LinePattern = () => (
+  <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="linePattern" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M0 40V.5H40" fill="none" stroke="rgba(0,0,0,0.03)" strokeWidth="1"></path>
+        <path d="M0 .5H40V40" fill="none" stroke="rgba(0,0,0,0.03)" strokeWidth="1"></path>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#linePattern)"></rect>
+  </svg>
+);
