@@ -12,6 +12,7 @@ import PhotoCapture from "@/components/report/photo-capture";
 import DamageAnalysisCard from "@/components/report/damage-analysis-card";
 import ClaimForm from "@/components/report/claim-form";
 import Confirmation from "@/components/report/confirmation";
+import AgenticPipeline from "@/components/report/agentic-pipeline";
 
 import type { VoiceTranscription, DamageAnalysis, Claim, MismatchCheck, PhotoEvidence } from "@/lib/types";
 
@@ -26,6 +27,7 @@ export default function ReportPage() {
   const [claim, setClaim] = useState<Claim | null>(null);
   const [mismatchChecks, setMismatchChecks] = useState<MismatchCheck[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isSimulatingAgent, setIsSimulatingAgent] = useState(false);
   const [submissionResult, setSubmissionResult] = useState<{ referenceNumber: string; claimId: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const testModeEnabled = process.env.NEXT_PUBLIC_ENABLE_TEST_MODE === "true";
@@ -84,6 +86,10 @@ export default function ReportPage() {
 
   const handleSubmitClaim = async () => {
     if (!claim) return;
+    setIsSimulatingAgent(true);
+  };
+
+  const handlePipelineComplete = async () => {
     setIsProcessing(true);
     try {
       const res = await fetch("/api/submit-claim", {
@@ -101,11 +107,12 @@ export default function ReportPage() {
         referenceNumber: json.data.reference_number,
         claimId: json.data.claim_id,
       });
+      setIsSimulatingAgent(false);
       setCurrentStep(4);
     } catch (error) {
-      console.error("Submission failed:", error);
+      console.error("Claim submission failed:", error);
       setError(error instanceof Error ? error.message : "Failed to submit claim");
-    } finally {
+      setIsSimulatingAgent(false);
       setIsProcessing(false);
     }
   };
@@ -249,12 +256,16 @@ export default function ReportPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
               >
-                <ClaimForm
-                  claim={claim}
-                  mismatchChecks={mismatchChecks}
-                  onSubmit={handleSubmitClaim}
-                  isSubmitting={isProcessing}
-                />
+                {isSimulatingAgent ? (
+                  <AgenticPipeline onComplete={handlePipelineComplete} />
+                ) : (
+                  <ClaimForm
+                    claim={claim}
+                    mismatchChecks={mismatchChecks}
+                    onSubmit={handleSubmitClaim}
+                    isSubmitting={isProcessing}
+                  />
+                )}
               </motion.div>
             )}
 
