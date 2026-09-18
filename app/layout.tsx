@@ -9,7 +9,7 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Fasal Rakshak — AI Crop Insurance Claim Agent",
+  title: "Fasal Rakshak | AI Crop Insurance Agent",
   description:
     "Save your PMFBY crop insurance claim before the 72-hour window expires. AI-powered voice + camera agent for Indian farmers.",
   keywords: [
