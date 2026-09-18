@@ -18,13 +18,6 @@ export default function Navbar() {
           <Link href="/claims" className="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors">
             My Claims
           </Link>
-          <Link href="/marketplace" className="text-sm font-bold text-blue-600 flex items-center gap-1.5 relative group">
-            <Sparkles className="w-3.5 h-3.5" />
-            AI Agents
-            <span className="absolute -top-3 -right-6 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
-              NEW
-            </span>
-          </Link>
         </div>
 
         <div className="flex items-center">

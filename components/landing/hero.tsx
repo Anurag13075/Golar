@@ -50,23 +50,6 @@ export default function Hero() {
               Get Started <ArrowRight className="w-4 h-4 text-slate-500" />
             </button>
           </Link>
-          
-          <div className="flex flex-col sm:flex-row items-center gap-4 mt-8 pt-8 border-t border-white/20 justify-center">
-            <p className="text-white/80 text-sm font-medium">✨ New Feature:</p>
-            <Link 
-              href="/marketplace" 
-              className="group relative flex items-center gap-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-5 py-2.5 transition-all"
-            >
-              <div className="flex -space-x-2">
-                <div className="w-6 h-6 rounded-full bg-blue-500 border border-white flex items-center justify-center text-[10px] shadow-sm">👨‍⚖️</div>
-                <div className="w-6 h-6 rounded-full bg-emerald-500 border border-white flex items-center justify-center text-[10px] shadow-sm">🩺</div>
-                <div className="w-6 h-6 rounded-full bg-amber-500 border border-white flex items-center justify-center text-[10px] shadow-sm">📈</div>
-              </div>
-              <span className="text-sm font-bold text-white transition-colors">
-                Explore the AI Agent Marketplace <span className="ml-1 text-blue-200 group-hover:translate-x-1 inline-block transition-transform">→</span>
-              </span>
-            </Link>
-          </div>
         </motion.div>
       </div>
 

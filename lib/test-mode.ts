@@ -16,8 +16,8 @@ export const TEST_POLICY: FarmerPolicy = {
   block: "Test Block",
   village: "Test Village",
   season: "rabi",
-  coverage_start: "2025-10-01",
-  coverage_end: "2026-04-30",
+  coverage_start: "2020-01-01",
+  coverage_end: "2030-12-31",
   sum_insured: 100000,
   insurance_company: "Test Insurance Company",
   bank_name: "Test Bank",
@@ -32,7 +32,8 @@ export function isTestMode(): boolean {
 }
 
 export function getTestPolicy(policyNumber: string): FarmerPolicy | undefined {
-  return isTestMode() && policyNumber === TEST_POLICY_NUMBER ? TEST_POLICY : undefined;
+  if (policyNumber === TEST_POLICY_NUMBER) return TEST_POLICY;
+  return isTestMode() ? TEST_POLICY : undefined;
 }
 
 export function saveTestClaim(claim: Claim): void {

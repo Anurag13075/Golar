@@ -1,7 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand, GetCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import type { Claim, FarmerPolicy } from "@/lib/types";
-import { getTestPolicy, getTestClaim, getAllTestClaims, saveTestClaim } from "@/lib/test-mode";
+import { getTestPolicy, getTestClaim, getAllTestClaims, saveTestClaim, isTestMode } from "@/lib/test-mode";
 
 const client = new DynamoDBClient({
   region: process.env.MY_AWS_REGION || process.env.AWS_REGION,
@@ -21,6 +21,7 @@ export async function saveClaimToDynamo(claim: Claim): Promise<void> {
 }
 
 export async function getClaimFromDynamo(claimId: string): Promise<Claim | undefined> {
+  if (isTestMode()) return getTestClaim(claimId);
   const testClaim = getTestClaim(claimId);
   if (testClaim) return testClaim;
   const result = await docClient.send(new GetCommand({
@@ -31,6 +32,7 @@ export async function getClaimFromDynamo(claimId: string): Promise<Claim | undef
 }
 
 export async function getAllClaims(): Promise<Claim[]> {
+  if (isTestMode()) return getAllTestClaims();
   const testClaims = getAllTestClaims();
   if (testClaims.length > 0) return testClaims;
   const result = await docClient.send(new ScanCommand({

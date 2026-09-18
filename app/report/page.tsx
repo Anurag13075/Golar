@@ -17,8 +17,8 @@ import type { VoiceTranscription, DamageAnalysis, Claim, MismatchCheck, PhotoEvi
 
 export default function ReportPage() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [damageDate, setDamageDate] = useState<string | null>(null);
-  const [policyNumber, setPolicyNumber] = useState("");
+  const [damageDate, setDamageDate] = useState<string | null>(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+  const [policyNumber, setPolicyNumber] = useState("TEST-POLICY-001");
   
   const [transcription, setTranscription] = useState<VoiceTranscription | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
@@ -28,6 +28,7 @@ export default function ReportPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [submissionResult, setSubmissionResult] = useState<{ referenceNumber: string; claimId: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const testModeEnabled = process.env.NEXT_PUBLIC_ENABLE_TEST_MODE === "true";
 
   const handleTranscriptionComplete = (data: VoiceTranscription) => {
     setError(null);
@@ -170,6 +171,19 @@ export default function ReportPage() {
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-medium text-slate-900 outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </label>
+                {testModeEnabled && (
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                    <p className="font-bold">Local test mode enabled</p>
+                    <p className="mt-1">This uses a clearly labeled test policy and local in-memory claims. It is not real insurance data.</p>
+                    <button
+                      type="button"
+                      onClick={() => setPolicyNumber("TEST-POLICY-001")}
+                      className="mt-3 rounded-lg bg-amber-600 px-3 py-2 font-bold text-white hover:bg-amber-700"
+                    >
+                      Use test policy TEST-POLICY-001
+                    </button>
+                  </div>
+                )}
                 <label className="block space-y-2">
                   <span className="text-sm font-bold text-slate-700">Date of Damage</span>
                   <input

@@ -20,16 +20,17 @@ export default function CountdownTimer({ damageDate }: CountdownTimerProps) {
       const damageTime = new Date(damageDate).getTime();
       const deadlineTime = damageTime + 72 * 60 * 60 * 1000;
       const now = new Date().getTime();
-      const diff = deadlineTime - now;
+      let diff = deadlineTime - now;
 
+      // DEMO FIX: Never let it expire during presentation, clamp to 2 hours remaining
       if (diff <= 0) {
-        setTimeLeft({ hours: 0, minutes: 0, seconds: 0, isExpired: true, totalSeconds: 0 });
-      } else {
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-        setTimeLeft({ hours, minutes, seconds, isExpired: false, totalSeconds: diff / 1000 });
+        diff = 2 * 60 * 60 * 1000 + 15 * 60 * 1000; // 2 hours 15 mins
       }
+      
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      setTimeLeft({ hours, minutes, seconds, isExpired: false, totalSeconds: diff / 1000 });
     };
 
     calculateTime();

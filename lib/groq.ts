@@ -18,7 +18,7 @@ export async function invokeGroqText(prompt: string, systemPrompt?: string): Pro
 
     const completion = await groq.chat.completions.create({
       messages,
-      model: process.env.GROQ_MODEL_ID_TEXT || "openai/gpt-oss-120b", // current Groq flagship text model
+      model: "openai/gpt-oss-120b",
       temperature: 0.1,
     });
 
@@ -55,7 +55,7 @@ export async function invokeGroqVision(base64Image: string, prompt: string): Pro
           ],
         },
       ],
-      model: process.env.GROQ_MODEL_ID_VISION || "qwen/qwen3.6-27b", // verify exact current vision model at console.groq.com/docs/models
+      model: "qwen/qwen3.8-27b",
       temperature: 0.1,
     });
 
